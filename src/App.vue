@@ -19,7 +19,7 @@
         </div>
         <div class='form-group col-md-4 center mx-auto'>
           <label for='inputState'>Choose a category</label>
-          <select name='trivia_category' class='form-control'>
+          <select name='trivia_category' class='form-control' v-model="category">
             <option value='any'>Any Category</option>
             <option value='9'>General Knowledge</option>
             <option value='10'>Entertainment: Books</option>
@@ -134,7 +134,7 @@ export default {
     return {
       form_submitted: false,
       number_questions: 10,
-      category: 8,
+      category: 'any',
       difficulty: 'any',
       type: 'any',
       results: [],
@@ -154,6 +154,8 @@ export default {
       if (this.category !== 8) {
         concat = concat.concat(`&category=${this.category}`);
       }
+      console.log(this.category);
+      console.log(concat);
       if (this.difficulty !== 'any') {
         concat = concat.concat(`&difficulty=${this.difficulty}`);
       }
@@ -180,6 +182,7 @@ export default {
         res.actual_answer = i;
       });
       this.title = 'Test your knowlegde!';
+      console.log(concat);
     },
     getResults() {
       this.title = 'Here are your results!';
