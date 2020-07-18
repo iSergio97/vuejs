@@ -154,8 +154,6 @@ export default {
       if (this.category !== 8) {
         concat = concat.concat(`&category=${this.category}`);
       }
-      console.log(this.category);
-      console.log(concat);
       if (this.difficulty !== 'any') {
         concat = concat.concat(`&difficulty=${this.difficulty}`);
       }
@@ -182,7 +180,6 @@ export default {
         res.actual_answer = i;
       });
       this.title = 'Test your knowlegde!';
-      console.log(concat);
     },
     getResults() {
       this.title = 'Here are your results!';
