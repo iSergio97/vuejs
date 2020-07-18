@@ -151,7 +151,7 @@ export default {
       this.loading = true;
       const BASE_URL = 'https://opentdb.com/api.php?';
       var concat = BASE_URL.concat('amount=' + this.number_questions);
-      if (this.category !== 8) {
+      if (this.category !== 'any') {
         concat = concat.concat(`&category=${this.category}`);
       }
       if (this.difficulty !== 'any') {
@@ -178,7 +178,36 @@ export default {
         res.answers = array;
         res.selected_answer = '';
         res.actual_answer = i;
+        const arrayAnswers = [];
+        res.answers.forEach(str => {
+          let replaced = "";
+          if(str.includes("&quot;") || str.includes("&#039;")) {
+            if(str.includes("&quot;")) {
+              let replaced = str.replace(/&quot;/g, "\"");
+              arrayAnswers.push(replaced);
+              console.log(replaced);
+            } else {
+              let replaced = str.replace(/&#039;/g, "\'");
+              arrayAnswers.push(replaced);
+              console.log(replaced);
+            }
+          } else {
+            arrayAnswers.push(str);
+          } 
+        });
+        res.answers = arrayAnswers;
+        if(res.question.includes("&quot;")) {
+          res.question = res.question.replace(/&quot;/g, "\"");
+          console.log(res.question);
+        } 
+        if(res.question.includes("&#039;")) {
+          res.question = res.question.replace(/&#039;/g, "\'");
+          console.log(res.question);
+        }
       });
+
+      console.log(this.results);
+
       this.title = 'Test your knowlegde!';
     },
     getResults() {
@@ -189,7 +218,8 @@ export default {
           this.score += 1;
         };
       });
-      if(this.score > 4) {
+      this.score = (Math.round((this.score/this.number_questions) * 100)/100) * 10;
+      if(this.score >= 5) {
         this.final_solution = 'Congratulations! You have passed this test!';
       } else {
         this.final_solution = 'Dont worry about this test!'
