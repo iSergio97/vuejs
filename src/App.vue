@@ -10,6 +10,7 @@
     <h1 style='title border'>{{title}}</h1>
     <div v-if="!evaluated">
       <div v-if='!form_submitted'>
+        <h3> {{error}} </h3>
       <form>
         <div class='form-group col-md-4 center mx-auto'>
           <label for='inputState'>Amount of answers</label>
@@ -62,7 +63,7 @@
             &gt;
             <option value='any'>Any type</option>
             <option value='multiple'>Multiple selection</option>
-            <option value='boolean'>True false</option>
+            <option value='boolean'>True/False</option>
           </select>
         </div>
         <div class='form-group col-md-1 center mx-auto'>
@@ -143,6 +144,7 @@ export default {
       score: 0,
       title: 'Check your knowlegde here with a tons of themes to try!',
       final_solution: '',
+      error: '',
     };
   },
   methods: {
@@ -161,13 +163,12 @@ export default {
         concat = concat.concat(`&type=${this.type}`);
       }
 
+      this.error = "";
       await fetch(concat)
         .then(res => res.json())
         .then(res => {
           this.results = res.results;
         });
-      this.form_submitted = true;
-      this.loading = false;
       this.results.forEach((res, i) => {
         const array = [];
         res.incorrect_answers.forEach(str => {
@@ -185,11 +186,9 @@ export default {
             if(str.includes("&quot;")) {
               let replaced = str.replace(/&quot;/g, "\"");
               arrayAnswers.push(replaced);
-              console.log(replaced);
             } else {
               let replaced = str.replace(/&#039;/g, "\'");
               arrayAnswers.push(replaced);
-              console.log(replaced);
             }
           } else {
             arrayAnswers.push(str);
@@ -198,15 +197,19 @@ export default {
         res.answers = arrayAnswers;
         if(res.question.includes("&quot;")) {
           res.question = res.question.replace(/&quot;/g, "\"");
-          console.log(res.question);
         } 
         if(res.question.includes("&#039;")) {
           res.question = res.question.replace(/&#039;/g, "\'");
-          console.log(res.question);
         }
       });
 
-      console.log(this.results);
+      if(this.results.length === 0) {
+        this.loading = false;
+        this.error = "There are no questions for this combination, please try again with another one";
+      } else {
+        this.form_submitted = true;
+        this.loading = false;
+      }
 
       this.title = 'Test your knowlegde!';
     },
@@ -230,16 +233,12 @@ export default {
 </script>
 
 <style>
-h1 {
-  text-align: center;
-}
-
 .question, .answers {
   border: 'thick solid #0000FF';
   text-align: center;
 }
 
-h4, h5{
+h1, h3, h4, h5{
   text-align: center;
 }
 
@@ -267,5 +266,9 @@ btn {
 
 .img-final {
   width: 15%;
+}
+
+h3 {
+color: red;
 }
 </style>
