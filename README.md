@@ -1,5 +1,9 @@
 # quiz-app
 
+## URL
+```
+[Quizz App Generator](https://test-generator.netlify.app)
+```
 ## Project setup
 ```
 npm install
